@@ -1,5 +1,6 @@
 import './css/styles.css';
 import fetchCountries from './js/fetchCountries';
+var debounce = require('lodash.debounce');
 
 const DEBOUNCE_DELAY = 300;
 const refs = {
@@ -10,4 +11,7 @@ const refs = {
 
 const country = refs.searchBoxEl.value;
 console.log(refs.searchBoxEl, refs.countryListEl, refs.countryInfoEl);
-refs.searchBoxEl.addEventListener('input', fetchCountries);
+refs.searchBoxEl.addEventListener(
+  'input',
+  debounce(fetchCountries, DEBOUNCE_DELAY)
+);
