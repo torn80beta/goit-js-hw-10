@@ -10,7 +10,6 @@ const refs = {
   countryInfoEl: document.querySelector('.country-info'),
 };
 
-let searchQuery = '';
 const notificationOptions = {
   position: 'center-top',
   cssAnimationStyle: 'from-top',
@@ -20,7 +19,7 @@ const notificationOptions = {
 refs.searchBoxEl.addEventListener('input', debounce(onSearch, DEBOUNCE_DELAY));
 
 function onSearch(e) {
-  searchQuery = e.target.value.trim();
+  const searchQuery = e.target.value.trim();
   if (searchQuery === '') {
     resetMarkup();
     return;
