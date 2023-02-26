@@ -1,6 +1,6 @@
 import './css/styles.css';
 import { fetchCountries } from './js/fetchCountries';
-//import fetchCountries from './js/fetchCountries';
+import { Notify } from 'notiflix/build/notiflix-notify-aio';
 var debounce = require('lodash.debounce');
 
 const DEBOUNCE_DELAY = 300;
@@ -15,8 +15,25 @@ let searchQuery = '';
 refs.searchBoxEl.addEventListener('input', debounce(onSearch, DEBOUNCE_DELAY));
 
 function onSearch(e) {
-  searchQuery = e.target.value;
-  fetchCountries(searchQuery).then(data => showFlag(data));
+  searchQuery = e.target.value.trim();
+  if (searchQuery === '') {
+    refs.countryListEl.innerHTML = '';
+    return;
+  }
+  fetchCountries(searchQuery).then(data => {
+    if (data.length >= 10) {
+      Notify.info(
+        'Too many matches found. Please enter a more specific name.',
+        {
+          position: 'center-top',
+          cssAnimationStyle: 'from-top',
+          showOnlyTheLastOne: true,
+        }
+      );
+    } else {
+      showFlag(data);
+    }
+  });
 }
 
 function showFlag(countries) {
