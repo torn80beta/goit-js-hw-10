@@ -11,31 +11,53 @@ const refs = {
 };
 
 let searchQuery = '';
+const notificationOptions = {
+  position: 'center-top',
+  cssAnimationStyle: 'from-top',
+  showOnlyTheLastOne: true,
+};
 
 refs.searchBoxEl.addEventListener('input', debounce(onSearch, DEBOUNCE_DELAY));
 
 function onSearch(e) {
   searchQuery = e.target.value.trim();
   if (searchQuery === '') {
-    refs.countryListEl.innerHTML = '';
+    resetMarkup();
     return;
   }
-  fetchCountries(searchQuery).then(data => {
-    if (data.length >= 10) {
-      Notify.info(
-        'Too many matches found. Please enter a more specific name.',
-        {
-          position: 'center-top',
-          cssAnimationStyle: 'from-top',
-          showOnlyTheLastOne: true,
-        }
-      );
-    } else if (data.length === 1) {
-      showCountryInfo(data);
-    } else {
-      showFlag(data);
-    }
-  });
+  fetchCountries(searchQuery)
+    .then(handle404Error)
+    .then(onFetch)
+    .catch(onFetchError);
+}
+
+function onFetch(data) {
+  if (data.length >= 10) {
+    Notify.info(
+      'Too many matches found. Please enter a more specific name.',
+      notificationOptions
+    );
+  } else if (data.length === 1) {
+    showCountryInfo(data);
+  } else if (data.length > 1 && data.length < 10) {
+    showFlag(data);
+  }
+}
+
+function handle404Error(data) {
+  if (data.status === 404) {
+    throw new Error(data.message);
+  }
+  return data;
+}
+
+function onFetchError(error) {
+  console.log(error.message);
+  resetMarkup();
+  Notify.failure(
+    'Oops, there is no country with that name',
+    notificationOptions
+  );
 }
 
 function showFlag(countries) {
