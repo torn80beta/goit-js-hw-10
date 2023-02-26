@@ -30,6 +30,8 @@ function onSearch(e) {
           showOnlyTheLastOne: true,
         }
       );
+    } else if (data.length === 1) {
+      showCountryInfo(data);
     } else {
       showFlag(data);
     }
@@ -37,26 +39,43 @@ function onSearch(e) {
 }
 
 function showFlag(countries) {
-  refs.countryListEl.innerHTML = '';
+  resetMarkup();
   const markup = countries
     .map(
       country =>
-        `<li class="country"><img src='${country.flags.svg}' width=30 height=20 alt="${country.flags.alt}"><p class="country-name">${country.name.common}</p></li>`
+        `<li class="country"><img src='${country.flags.svg}' width=30 height=20 alt="${country.flags.alt}"><p class="name">${country.name.common}</p></li>`
     )
     .join('');
   refs.countryListEl.insertAdjacentHTML('afterbegin', markup);
 }
 
-// function fetchCountries(e) {
-//   fetch(
-//     `https://restcountries.com/v3.1/name/${e.target.value}?fields=name,capital,population,flags,languages`
-//   )
-//     .then(res => {
-//       //console.log(res.json());
-//       return res.json();
-//     })
-//     .then(res => {
-//       showFlag(res);
-//       console.log(res[0].name);
-//     });
-// }
+function showCountryInfo(country) {
+  resetMarkup();
+  const languages = [];
+  Object.entries(country[0].languages).forEach(([key, value]) => {
+    languages.push(value);
+  });
+
+  const markup = `<ul class="country-full">
+        <li class="country"><img src='${
+          country[0].flags.svg
+        }' width=30 height=20 alt="${country[0].flags.alt}">
+            <p class="name">${country[0].name.common}</p>
+        </li>
+        <li class="country"><span class="name">Capital:</span> ${
+          country[0].capital
+        }</li>
+        <li class="country"><span class="name">Population:</span> ${
+          country[0].population
+        }</li>
+        <li class="country"><span class="name">Languages:</span> ${languages.join(
+          ', '
+        )}</li>
+    </ul>`;
+  refs.countryInfoEl.innerHTML = markup;
+}
+
+function resetMarkup() {
+  refs.countryListEl.innerHTML = '';
+  refs.countryInfoEl.innerHTML = '';
+}

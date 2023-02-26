@@ -37,7 +37,7 @@ li {
   gap: 10px;
 }
 
-.country-name {
+.name {
   font-size: 18px;
-  font-weight: 600;
+  font-weight: 700;
 }
