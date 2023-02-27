@@ -1,5 +1,5 @@
 import './css/styles.css';
-import { fetchCountries } from './js/fetchCountries';
+import { FetchCountries } from './js/fetchCountries';
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
 var debounce = require('lodash.debounce');
 
@@ -24,7 +24,7 @@ function onSearch(e) {
     resetMarkup();
     return;
   }
-  fetchCountries(searchQuery)
+  FetchCountries(searchQuery)
     .then(handle404Error)
     .then(onFetch)
     .catch(onFetchError);
